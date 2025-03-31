@@ -7,12 +7,13 @@ const LOGIN_POST_END_POINT = "http://localhost:142/loginuser";
 interface LoginPageProps {
   onBack: () => void;
   onLogin: (success: boolean) => void;
+  email: string;
+  setEmail: React.Dispatch<React.SetStateAction<string>>
+  setName: React.Dispatch<React.SetStateAction<string>>
 }
 
-const LoginPage: React.FC<LoginPageProps> = ({ onBack, onLogin }) => {
-  const [email, setEmail] = useState('');
+const LoginPage: React.FC<LoginPageProps> = ({ onBack, onLogin, email, setEmail, setName}) => {
   const [password, setPassword] = useState('');
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     axios.post(LOGIN_POST_END_POINT, {
@@ -21,6 +22,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onBack, onLogin }) => {
     }).then((dataOBJ) => {
       if (dataOBJ.data.authentication) {
         onLogin(true);
+        setName(dataOBJ.data.name);
       }
     }).catch(() => {
       onLogin(false);

@@ -52,6 +52,8 @@ function App() {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [isAnswerCorrect, setIsAnswerCorrect] = useState<boolean | null>(null);
   const [selectedBattleId, setSelectedBattleId] = useState<string>('');
+  const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
 
   const handleAnswer = (optionIndex: number) => {
     if (selectedAnswer !== null) return;
@@ -196,11 +198,11 @@ function App() {
       {renderBackButton()}
       
       {gameState === 'profile' && (
-        <ProfilePage onBack={() => setGameState('lobby')} />
+        <ProfilePage onBack={() => setGameState('lobby')} email_PRE={email} name_PRE={name}/>
       )}
 
       {gameState === 'login' && (
-        <LoginPage onBack={() => setGameState('lobby')} onLogin={handleLogin} />
+        <LoginPage onBack={() => setGameState('lobby')} onLogin={handleLogin} email={email} setEmail={setEmail} setName={setName}/>
       )}
 
       {gameState === 'signup' && (

@@ -1,24 +1,67 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ArrowLeft, Trophy, Target, Skull, Brain, Timer } from 'lucide-react';
+import axios from 'axios';
+
+const PROFILE_POST_END_POINT = "http://localhost:142/getprofile";
 
 interface ProfilePageProps {
   onBack: () => void;
+  email_PRE: string;
+  name_PRE: string
 }
 
-const ProfilePage: React.FC<ProfilePageProps> = ({ onBack }) => {
-  // Mock data - in a real app, this would come from your backend
-  const profile = {
-    name: "John Doe",
-    imageUrl: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=crop&w=256&h=256&q=80",
-    stats: {
-      gamesPlayed: 124,
-      wins: 45,
-      losses: 79,
-      averageScore: 780,
-      averageTime: "2m 34s",
-      highestStreak: 12
+type PlayerStats = {
+  gamesPlayed: number,
+  wins: number,
+  losses: number,
+  averageScore: number,
+  averageTime: string,
+  highestStreak: number
+}
+
+type Player = {
+  name: string,
+  imageUrl: string,
+  stats: PlayerStats
+  
+}
+
+const ProfilePage: React.FC<ProfilePageProps> = ({ onBack, email_PRE, name_PRE }) => {
+  const [profile, setProfile] = useState<Player>(
+    {
+      name: "",
+      imageUrl: "",
+      stats: {
+        gamesPlayed: 0,
+        wins: 0,
+        losses: 0,
+        averageScore: 0,
+        averageTime: "",
+        highestStreak: 0
+      }
     }
-  };
+  )
+
+  useEffect(() => {
+    axios.post(PROFILE_POST_END_POINT, {
+      email: email_PRE,
+      name: name_PRE
+    }).then((dataOBJ) => {
+      setProfile({
+        name: dataOBJ.data.data_body.name,
+        imageUrl: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=crop&w=256&h=256&q=80",
+        stats: {
+          gamesPlayed: dataOBJ.data.data_body.games_played,
+          wins: dataOBJ.data.data_body.victories,
+          losses: dataOBJ.data.data_body.games_played - dataOBJ.data.data_body.victories,
+          averageScore: dataOBJ.data.data_body.average_score,
+          averageTime: dataOBJ.data.data_body.average_time,
+          highestStreak: dataOBJ.data.data_body.highest_streak
+        }
+      });
+      console.log(dataOBJ.data)
+    });
+  }, []);
 
   return (
     <div className="min-h-screen p-6">
