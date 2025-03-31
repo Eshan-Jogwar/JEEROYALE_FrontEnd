@@ -11,6 +11,7 @@ import ConceptTree from './components/ConceptTree';
 import LoginPage from './components/LoginPage';
 import SignupPage from './components/SignupPage';
 import WaitingRoom from './components/WaitingRoom';
+import axios from 'axios';
 
 interface Question {
   id: number;
@@ -100,9 +101,16 @@ function App() {
   };
 
   const handleTopicSelect = (chapterId: string, subtopicId: string) => {
+    const GENERATE_SESSION_URL_END_POINT = "http://localhost:142/startSession"
     setSelectedChapter(chapterId);
     setSelectedSubtopic(subtopicId);
     setGameState('waiting');
+    axios.post(GENERATE_SESSION_URL_END_POINT, {
+      subject: selectedSubject,
+      topic: subtopicId
+    }).then((dataObj) => {
+      document.cookie = `sessionId=${dataObj.data.sessionId} path=/`
+    })
     setCurrentQuestion(0);
     setLives(3);
     setScore(0);
