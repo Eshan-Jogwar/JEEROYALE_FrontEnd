@@ -87,7 +87,11 @@ function App() {
   };
 
   const startGame = () => {
-    setGameState('subjects');
+    if (email != ""){
+      setGameState('subjects');
+    }else{
+      setGameState('login')
+    }
   };
 
   const handleSubjectSelect = (subjectId: string) => {

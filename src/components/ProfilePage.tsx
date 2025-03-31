@@ -17,6 +17,7 @@ type PlayerStats = {
   averageScore: number,
   averageTime: string,
   highestStreak: number
+  rr: string
 }
 
 type Player = {
@@ -37,7 +38,8 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack, email_PRE, name_PRE }
         losses: 0,
         averageScore: 0,
         averageTime: "",
-        highestStreak: 0
+        highestStreak: 0,
+        rr: ""
       }
     }
   )
@@ -56,7 +58,8 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack, email_PRE, name_PRE }
           losses: dataOBJ.data.data_body.games_played - dataOBJ.data.data_body.victories,
           averageScore: dataOBJ.data.data_body.average_score,
           averageTime: dataOBJ.data.data_body.average_time,
-          highestStreak: dataOBJ.data.data_body.highest_streak
+          highestStreak: dataOBJ.data.data_body.highest_streak,
+          rr: dataOBJ.data.data_body.rr
         }
       });
       console.log(dataOBJ.data)
@@ -84,7 +87,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onBack, email_PRE, name_PRE }
             <div className="absolute bottom-2 right-0 bg-green-500 w-6 h-6 rounded-full border-4 border-white"></div>
           </div>
           <h1 className="text-3xl font-bold mb-2">{profile.name}</h1>
-          <p className="text-purple-300">Quiz Master</p>
+          <p className="text-purple-300">{profile.stats.rr}</p>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
