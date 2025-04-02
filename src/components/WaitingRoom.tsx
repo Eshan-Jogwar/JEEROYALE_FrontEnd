@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Users, Timer } from 'lucide-react';
-
+import axios from 'axios';
 interface WaitingRoomProps {
   onGameStart: () => void;
 }
@@ -8,12 +8,21 @@ interface WaitingRoomProps {
 const WaitingRoom: React.FC<WaitingRoomProps> = ({ onGameStart }) => {
   const [countdown, setCountdown] = useState(5);
   const [players, setPlayers] = useState(1);
+  const NUMBER_OF_PEOPLE_END_POINT = "http://localhost:142/getNumPeople"
 
   useEffect(() => {
-    // Simulate players joining
+    axios.post(NUMBER_OF_PEOPLE_END_POINT, {
+      sessionId: document.cookie.split("=")[1].split(" ")[0]
+    }).then((dataObj) => {
+      setPlayers(dataObj.data.people);
+    })
     const playerInterval = setInterval(() => {
-      setPlayers(prev => Math.min(prev + Math.floor(Math.random() * 3), 100));
-    }, 800);
+      axios.post(NUMBER_OF_PEOPLE_END_POINT, {
+        sessionId: document.cookie.split("=")[1].split(" ")[0]
+      }).then((dataObj) => {
+        setPlayers(dataObj.data.people);
+      })
+    }, 2000);
 
     // Countdown timer
     const timer = setInterval(() => {

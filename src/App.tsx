@@ -12,34 +12,7 @@ import LoginPage from './components/LoginPage';
 import SignupPage from './components/SignupPage';
 import WaitingRoom from './components/WaitingRoom';
 import axios from 'axios';
-
-interface Question {
-  id: number;
-  text: string;
-  options: string[];
-  correctAnswer: number;
-}
-
-const sampleQuestions: Question[] = [
-  {
-    id: 1,
-    text: "What is the capital of France?",
-    options: ["London", "Berlin", "Paris", "Madrid"],
-    correctAnswer: 2
-  },
-  {
-    id: 2,
-    text: "Which planet is known as the Red Planet?",
-    options: ["Venus", "Mars", "Jupiter", "Saturn"],
-    correctAnswer: 1
-  },
-  {
-    id: 3,
-    text: "Who painted the Mona Lisa?",
-    options: ["Van Gogh", "Da Vinci", "Picasso", "Rembrandt"],
-    correctAnswer: 1
-  }
-];
+import GameScreen from './components/GameScreen';
 
 function App() {
   const [gameState, setGameState] = useState<'lobby' | 'subjects' | 'topics' | 'waiting' | 'playing' | 'results' | 'profile' | 'pastBattles' | 'battleReview' | 'conceptTree' | 'login' | 'signup'>('lobby');
@@ -47,14 +20,34 @@ function App() {
   const [lives, setLives] = useState(3);
   const [score, setScore] = useState(0);
   const [playersAlive, setPlayersAlive] = useState(100);
-  const [selectedChapter, setSelectedChapter] = useState('');
-  const [selectedSubtopic, setSelectedSubtopic] = useState('');
   const [selectedSubject, setSelectedSubject] = useState('');
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [isAnswerCorrect, setIsAnswerCorrect] = useState<boolean | null>(null);
   const [selectedBattleId, setSelectedBattleId] = useState<string>('');
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
+  const [selectedChapter, setSelectedChapter] = useState('');
+  const [selectedSubtopic, setSelectedSubtopic] = useState('');
+  const [sampleQuestions, setSampleQuestions] = useState([
+    {
+      id: 1,
+      text: "What is the capital of France?",
+      options: ["London", "Berlin", "Paris", "Madrid"],
+      correctAnswer: 2
+    },
+    {
+      id: 2,
+      text: "Which planet is known as the Red Planet?",
+      options: ["Venus", "Mars", "Jupiter", "Saturn"],
+      correctAnswer: 1
+    },
+    {
+      id: 3,
+      text: "Who painted the Mona Lisa?",
+      options: ["Van Gogh", "Da Vinci", "Picasso", "Rembrandt"],
+      correctAnswer: 1
+    }
+  ])
 
   const handleAnswer = (optionIndex: number) => {
     if (selectedAnswer !== null) return;
@@ -82,7 +75,17 @@ function App() {
       if (currentQuestion < sampleQuestions.length - 1) {
         setCurrentQuestion(currentQuestion + 1);
       } else {
-        setGameState('results');
+        const END_SESSION_END_POINT = "http://localhost:142/endSession";
+        axios.post(END_SESSION_END_POINT, {
+          sessionId: document.cookie.split("=")[1].split(" ")[0]
+        }).then((elem) => {
+          console.log(elem.data);
+          document.cookie = "";
+          setGameState('results');
+        }).catch(() => {
+          document.cookie = "";
+          setGameState('results');
+        });
       }
     }, 1000);
   };
@@ -101,20 +104,22 @@ function App() {
   };
 
   const handleTopicSelect = (chapterId: string, subtopicId: string) => {
-    const GENERATE_SESSION_URL_END_POINT = "http://localhost:142/startSession"
     setSelectedChapter(chapterId);
     setSelectedSubtopic(subtopicId);
-    setGameState('waiting');
+    const GENERATE_SESSION_URL_END_POINT = "http://localhost:142/startSession"
     axios.post(GENERATE_SESSION_URL_END_POINT, {
       subject: selectedSubject,
       topic: subtopicId
     }).then((dataObj) => {
       document.cookie = `sessionId=${dataObj.data.sessionId} path=/`
+    }).then((respon) => {
+      console.log(respon);
+      setGameState('waiting');
+      setCurrentQuestion(0);
+      setLives(3);
+      setScore(0);
+      setPlayersAlive(100);
     })
-    setCurrentQuestion(0);
-    setLives(3);
-    setScore(0);
-    setPlayersAlive(100);
   };
 
   const handleBattleSelect = (battleId: string) => {
@@ -277,63 +282,18 @@ function App() {
         <HomePage onTopicSelect={handleTopicSelect} />
       )}
 
-      {gameState === 'playing' && (
-        <div className="container mx-auto p-4 max-w-4xl">
-          <div className="flex justify-between items-center mb-8 pt-4">
-            <div className="flex items-center">
-              <Users className="mr-2" />
-              <span className="font-bold">{playersAlive} Solving People</span>
-            </div>
-            <div className="flex items-center">
-              <Timer className="mr-2" />
-              <span className="font-bold">30s</span>
-            </div>
-            <div className="flex items-center">
-              <Heart className="mr-2 text-red-500" />
-              <span className="font-bold">{lives}</span>
-            </div>
-          </div>
-
-          <div className="bg-white/10 backdrop-blur-lg rounded-lg p-6 mb-6">
-            <div className="mb-4">
-              <span className="text-sm font-semibold text-purple-300">
-                Chapter {selectedChapter} • Topic {selectedSubtopic}
-              </span>
-            </div>
-            <h2 className="text-2xl font-bold mb-6">
-              Question {currentQuestion + 1}/{sampleQuestions.length}
-            </h2>
-            <p className="text-xl mb-8">{sampleQuestions[currentQuestion].text}</p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {sampleQuestions[currentQuestion].options.map((option, index) => (
-                <button
-                  key={index}
-                  onClick={() => handleAnswer(index)}
-                  disabled={selectedAnswer !== null}
-                  className={`
-                    p-4 rounded-lg text-left transition-all transform hover:shadow-lg
-                    ${
-                      selectedAnswer === index
-                        ? isAnswerCorrect
-                          ? 'bg-green-500 scale-105 rotate-1'
-                          : 'bg-red-500 scale-95 -rotate-1'
-                        : 'bg-purple-700 hover:bg-purple-600 hover:scale-102 hover:rotate-[0.5deg]'
-                    }
-                    ${selectedAnswer !== null && selectedAnswer !== index ? 'opacity-50' : ''}
-                    ${
-                      selectedAnswer !== null && 
-                      index === sampleQuestions[currentQuestion].correctAnswer
-                        ? 'bg-green-500'
-                        : ''
-                    }
-                  `}
-                >
-                  {option}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
+      {gameState == 'playing' && (
+        <GameScreen 
+        playersAlive={playersAlive} 
+        lives={lives} 
+        selectedChapter={selectedChapter} 
+        selectedSubtopic={selectedSubtopic} 
+        currentQuestion={currentQuestion} 
+        sampleQuestions={sampleQuestions} 
+        handleAnswer={handleAnswer} 
+        isAnswerCorrect={isAnswerCorrect} 
+        selectedAnswer={selectedAnswer} 
+      />
       )}
 
       {gameState === 'results' && (
