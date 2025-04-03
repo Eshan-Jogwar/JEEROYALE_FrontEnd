@@ -33,22 +33,22 @@ function App() {
       id: 1,
       text: "What is the capital of France?",
       options: ["London", "Berlin", "Paris", "Madrid"],
-      correctAnswer: 2
+      correctAnswer: 1
     },
     {
       id: 2,
       text: "Which planet is known as the Red Planet?",
       options: ["Venus", "Mars", "Jupiter", "Saturn"],
-      correctAnswer: 1
+      correctAnswer: 3
     },
     {
       id: 3,
       text: "Who painted the Mona Lisa?",
       options: ["Van Gogh", "Da Vinci", "Picasso", "Rembrandt"],
-      correctAnswer: 1
+      correctAnswer: 2
     }
   ])
-
+  //{"id":"890a11cf-f2b1-4b8c-bb3c-700abdb9488e","sessionId":"e22eef73-9d78-4279-a3c6-04c1162b051c","questions":["Which of the following is a prime number?","What is the LCM of 4 and 6?","Solve: (5 × 4) - (6 ÷ 2) ","What is 144 divided by 12?","What is the GCF of 36 and 48?","What is 3 + 6 × 2?","What is a factor of 24?","What is 2^5?","What is the square root of 81?","What is 8 multiplied by 6?"],"options":["21","33","37","39","10","12","14","16","16","17","18","20","10","12","14","16","6","8","12","18","12","15","18","21","5","7","6","11","16","32","64","128","7","8","9","10","42","46","48","52"]}
   const handleAnswer = (optionIndex: number) => {
     if (selectedAnswer !== null) return;
 
@@ -293,6 +293,7 @@ function App() {
         handleAnswer={handleAnswer} 
         isAnswerCorrect={isAnswerCorrect} 
         selectedAnswer={selectedAnswer} 
+        setSampleQuestions={setSampleQuestions}
       />
       )}
 

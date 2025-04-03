@@ -52,6 +52,7 @@ const PastBattles: React.FC<PastBattlesProps> = ({ onBack, onBattleSelect }) => 
   ];
 
   return (
+    
     <div className="min-h-screen p-6">
       <button 
         onClick={onBack}
@@ -64,6 +65,7 @@ const PastBattles: React.FC<PastBattlesProps> = ({ onBack, onBattleSelect }) => 
       <div className="max-w-4xl mx-auto">
         <h1 className="text-4xl font-bold mb-8">Past Battles</h1>
         <div className="space-y-4">
+          <h1 className="italic" style={{color: "red"}} >****This Feature is Under Development only the front end of the feature is ready</h1>
           {battles.map((battle) => (
             <div
               key={battle.id}

@@ -1,5 +1,6 @@
+import axios from 'axios';
 import {  Users, Timer, Heart } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 type Question = {
     id: number;
     text: string;
@@ -17,11 +18,68 @@ interface GameScreenProps{
     handleAnswer: (optionIndex: number) => void
     isAnswerCorrect: boolean | null
     selectedAnswer: number | null
+    setSampleQuestions: React.Dispatch<React.SetStateAction<{
+      id: number;
+      text: string;
+      options: string[];
+      correctAnswer: number;
+  }[]>>
 }
 
+type QuestionData = {
+  id: string;
+  sessionId: string;
+  questions: string[];
+  options: string[];
+  current_answers: number[];
+};
+
 const GameScreen: React.FC<GameScreenProps> = (
-    { playersAlive, lives, selectedChapter, selectedSubtopic, currentQuestion, sampleQuestions, handleAnswer, isAnswerCorrect, selectedAnswer }
+    { playersAlive, lives, selectedChapter, selectedSubtopic, currentQuestion, sampleQuestions, handleAnswer, isAnswerCorrect, selectedAnswer, setSampleQuestions }
 ) => {
+  
+  type InputFormat = {
+    id: string;
+    sessionId: string;
+    questions: string[];
+    options: string[];
+    current_answers: number[];
+  };
+  
+  type OutputFormat = {
+    id: number;
+    text: string;
+    options: string[];
+    correctAnswer: number;
+  }[];
+  
+  function transformData(input: InputFormat): OutputFormat {
+    const questions = input.questions;
+    const options = input.options;
+    const answers = input.current_answers;
+    
+    const optionsPerQuestion = options.length / questions.length;
+    
+    return questions.map((question, index) => {
+      const start = index * optionsPerQuestion;
+      const end = start + optionsPerQuestion;
+      return {
+        id: index + 1,
+        text: question,
+        options: options.slice(start, end),
+        correctAnswer: answers[index],
+      };
+    });
+  }
+
+  const UPDATE_QUESTIONS_END_POINT = "http://localhost:142/updateQuestions";
+    useEffect(() => {
+      axios.post(UPDATE_QUESTIONS_END_POINT, {
+        sessionId: document.cookie.split("=")[1].split(" ")[0]
+      }).then((dataObj) => {
+        setSampleQuestions(transformData(dataObj.data.addedQuestions))
+      })
+    }, [])
 
     return (
         <div className="container mx-auto p-4 max-w-4xl">
