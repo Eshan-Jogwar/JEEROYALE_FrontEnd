@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Users, Timer } from 'lucide-react';
 import axios from 'axios';
+import { NUMBER_OF_PEOPLE_END_POINT } from '../links';
 interface WaitingRoomProps {
   onGameStart: () => void;
 }
@@ -8,7 +9,6 @@ interface WaitingRoomProps {
 const WaitingRoom: React.FC<WaitingRoomProps> = ({ onGameStart }) => {
   const [countdown, setCountdown] = useState(5);
   const [players, setPlayers] = useState(1);
-  const NUMBER_OF_PEOPLE_END_POINT = "http://localhost:142/getNumPeople"
 
   useEffect(() => {
     axios.post(NUMBER_OF_PEOPLE_END_POINT, {

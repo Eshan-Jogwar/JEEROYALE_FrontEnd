@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { ArrowLeft, Trophy, Target, Skull, Brain, Timer } from 'lucide-react';
 import axios from 'axios';
+import { PROFILE_POST_END_POINT } from '../links';
 
-const PROFILE_POST_END_POINT = "http://localhost:142/getprofile";
 
 interface ProfilePageProps {
   onBack: () => void;

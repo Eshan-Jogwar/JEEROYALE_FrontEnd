@@ -1,6 +1,7 @@
 import axios from 'axios';
 import {  Users, Timer, Heart } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { UPDATE_QUESTIONS_END_POINT } from '../links';
 type Question = {
     id: number;
     text: string;
@@ -25,14 +26,6 @@ interface GameScreenProps{
       correctAnswer: number;
   }[]>>
 }
-
-type QuestionData = {
-  id: string;
-  sessionId: string;
-  questions: string[];
-  options: string[];
-  current_answers: number[];
-};
 
 const GameScreen: React.FC<GameScreenProps> = (
     { playersAlive, lives, selectedChapter, selectedSubtopic, currentQuestion, sampleQuestions, handleAnswer, isAnswerCorrect, selectedAnswer, setSampleQuestions }
@@ -72,7 +65,6 @@ const GameScreen: React.FC<GameScreenProps> = (
     });
   }
 
-  const UPDATE_QUESTIONS_END_POINT = "http://localhost:142/updateQuestions";
     useEffect(() => {
       axios.post(UPDATE_QUESTIONS_END_POINT, {
         sessionId: document.cookie.split("=")[1].split(" ")[0]

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Crown, Users, Timer, Heart, Trophy, UserCircle, ArrowLeft } from 'lucide-react';
+import { Crown, Trophy, UserCircle, ArrowLeft } from 'lucide-react';
 import { Toaster, toast } from 'react-hot-toast';
 import HomePage from './components/HomePage';
 import SubjectSelection from './components/SubjectSelection';
@@ -13,6 +13,7 @@ import SignupPage from './components/SignupPage';
 import WaitingRoom from './components/WaitingRoom';
 import axios from 'axios';
 import GameScreen from './components/GameScreen';
+import { GENERATE_SESSION_URL_END_POINT, END_SESSION_END_POINT } from './links';
 
 function App() {
   const [gameState, setGameState] = useState<'lobby' | 'subjects' | 'topics' | 'waiting' | 'playing' | 'results' | 'profile' | 'pastBattles' | 'battleReview' | 'conceptTree' | 'login' | 'signup'>('lobby');
@@ -75,7 +76,6 @@ function App() {
       if (currentQuestion < sampleQuestions.length - 1) {
         setCurrentQuestion(currentQuestion + 1);
       } else {
-        const END_SESSION_END_POINT = "http://localhost:142/endSession";
         axios.post(END_SESSION_END_POINT, {
           sessionId: document.cookie.split("=")[1].split(" ")[0]
         }).then((elem) => {
@@ -106,7 +106,6 @@ function App() {
   const handleTopicSelect = (chapterId: string, subtopicId: string) => {
     setSelectedChapter(chapterId);
     setSelectedSubtopic(subtopicId);
-    const GENERATE_SESSION_URL_END_POINT = "http://localhost:142/startSession"
     axios.post(GENERATE_SESSION_URL_END_POINT, {
       subject: selectedSubject,
       topic: subtopicId

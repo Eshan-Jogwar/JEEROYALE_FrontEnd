@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { ArrowLeft, Mail, Lock } from 'lucide-react';
 import axios from 'axios';
-
-const LOGIN_POST_END_POINT = "http://localhost:142/loginuser";
-
+import { LOGIN_POST_END_POINT } from '../links';
 interface LoginPageProps {
   onBack: () => void;
   onLogin: (success: boolean) => void;

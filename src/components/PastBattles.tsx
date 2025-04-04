@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowLeft, Calendar, Users, Brain, Timer, Trophy, Bot } from 'lucide-react';
+import { ArrowLeft, Calendar, Users, Brain, Timer, Trophy } from 'lucide-react';
 
 interface Battle {
   id: string;

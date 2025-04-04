@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import { ArrowLeft, Mail, Lock, User } from 'lucide-react';
 import axios from 'axios';
+import { SIGNUP_POST_END_POINT } from '../links';
 interface SignupPageProps {
   onBack: () => void;
   onSignup: (success: boolean) => void;
 }
-
-const SIGNUP_POST_END_POINT = "http://localhost:142/signupuser"
 
 const SignupPage: React.FC<SignupPageProps> = ({ onBack, onSignup }) => {
   const [name, setName] = useState('');
